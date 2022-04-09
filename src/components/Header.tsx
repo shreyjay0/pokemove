@@ -2,7 +2,7 @@ import React from "react";
 
 function Header() {
   return (
-    <div>
+    <div className="mb-16">
       <nav className="flex items-center justify-between flex-wrap bg-red-100 p-6 text-xl font-bold">
         <div className="flex items-center flex-shrink-0 text-red-800 mr-6">
           pokemove

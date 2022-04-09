@@ -41,7 +41,7 @@ function Catch() {
   return (
     <div className="flex flex-row justify-between items-center py-6 px-2 h-1/2">
       <div className="flex-1 max-w-md">
-        <Webcam audio={false} ref={refCam} className="" />
+        <Webcam audio={false} ref={refCam} className="shadow-lg rounded-lg" />
       </div>
       <div className="w-48">
         <Pokemon pokemon={pokemon} />
