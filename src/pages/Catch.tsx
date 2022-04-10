@@ -12,7 +12,7 @@ const generateRandomPokemonName = () => {
   return pokemon;
 };
 
-const generateRandomPoseName = (poseNum: number, setPoseNum: (arg0: number) => void, match: boolean, setMatch: (arg0: boolean) => void, setCumMatch: (arg0: boolean) => void) => {
+const generateRandomPoseName = (poseNum: number, setPoseNum: (arg0: number) => void) => {
   // const poseNum = Math.floor(Math.random() * 5);
   const poses = [
     "https://www.gaia.com/wp-content/uploads/TreePose_StephSchwartz.jpg",
@@ -22,12 +22,6 @@ const generateRandomPoseName = (poseNum: number, setPoseNum: (arg0: number) => v
   // const yogapose = `https://www.yogapose.com/wp-content/uploads/2019/05/yoga-pose-${poseNum}.jpg`;
   const toReturn = poses[poseNum%3];
   setPoseNum(poseNum + 1);
-  console.log("MATCHHHHHHHH", match)
-  if (match) {
-    setCumMatch(true)
-  }
-  setMatch(false);
-  // setCumMatch(false);
   return toReturn
 };
 
@@ -40,6 +34,7 @@ function Catch() {
   const [imageSrc,setImageSrc]=React.useState('');
   const [match, setMatch] = React.useState(false);
   const[cumMatch, setCumMatch] = React.useState(false);
+  const [message, setMessage] = React.useState("");
   const canvas = React.useRef<any>();
 
   React.useEffect(() => {
@@ -59,7 +54,7 @@ function Catch() {
         // console.log("THISS IS THE RESULT: ", json); 
         if (json.isMatch) {
           setMatch(true)
-          console.log("yyayyyy")
+          // console.log("yyayyyy")
         }
           
         const ctx = canvas && canvas.current && canvas.current.getContext('2d');
@@ -181,29 +176,48 @@ function Catch() {
 
 
   React.useEffect(() => {
-    setTimeout(() => {
-      setPokemon(generateRandomPokemonName());
-      setYpose(generateRandomPoseName(poseNum, setPoseNum, match, setMatch, setCumMatch));
+    let timer = setTimeout(() => {
+      if (match) {
+        setCumMatch(true)
+      } else {
+        setMessage("IT RAN AWAY")
+      }
+      
+      setTimeout(() => {
+        setCumMatch(false)
+        setMessage("")
+        // setCumMatch(false);
+        console.log("SET POKEMON")
+        setPokemon(generateRandomPokemonName());
+        setYpose(generateRandomPoseName(poseNum, setPoseNum));
+        setMatch(false);
+      }, 1000)
+      
     }, 10000);
-  }, [match, pokemon, poseNum]);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [match, poseNum]);
   return (
     <div>
 
       <div className="flex flex-row justify-between items-center py-6 px-6 h-1/2">
         <div className="flex-1 max-w-md">
-          <Webcam audio={false} ref={refCam} screenshotFormat="image/jpeg" className="shadow-lg rounded-lg " />
-          <canvas style={{position: "absolute", top: "23%", left: "1.5%"}} ref={canvas} id="canvas" width="450" height="340"></canvas>
-
+          <Pokemon pokemon={pokemon} />
         </div>
         <div className="flex-1 max-w-md">
-          <Pokemon pokemon={pokemon} />
+          <Webcam audio={false} ref={refCam} screenshotFormat="image/jpeg" className="shadow-lg rounded-lg " />
+          <canvas style={{position: "absolute", top: "23.5%", left: "34.5%"}} ref={canvas} id="canvas" width="450" height="340"></canvas>
+
         </div>
         <div className="flex-1 max-w-md">
           <YPose ypose={ypose} />
         </div>
       </div>
-      {cumMatch && <div className="flex flex-row justify-between items-center py-6 px-6 h-1/2"> GOT IT!!!!!!!!!!!!! </div>}
-      {!cumMatch && <div className="flex flex-row justify-between items-center py-6 px-6 h-1/2"> NOPE </div>}
+      <div style={{display: "flex", justifyContent: "center", alignItems: "center" }}>
+        {cumMatch && <div style={{ color: "green ", fontSize: "5em", fontFamily: "Impact, Fantasy"}}> YOU CAUGHT A POKEMON! </div>}
+        {!cumMatch && <div style={{color: "red", fontSize: "5em", fontFamily: "Impact, Fantasy"}} > {message} </div>}
+      </div>
     </div>
   );
 }
